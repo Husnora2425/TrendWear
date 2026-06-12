@@ -1,0 +1,65 @@
+# TrendWear Cloud Platform
+# Eng oddiy ishga tushirish: docker compose up --build
+# Frontend va Backend bitta portda: http://localhost:8000
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: trendwear-backend
+    expose:
+      - "8001"
+    environment:
+      - DATABASE_URL=postgresql://trendwear:trendwear@db:5432/trendwear
+      - SECRET_KEY=trendwear-prod-secret-key
+    depends_on:
+      - db
+    volumes:
+      - trendwear_data:/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: trendwear-frontend
+    ports:
+      - "8000:80"  # Expose single host port (8000) for both frontend and backend via nginx
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: trendwear-db
+    environment:
+      POSTGRES_USER: trendwear
+      POSTGRES_PASSWORD: trendwear
+      POSTGRES_DB: trendwear
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  trendwear_data:
+  pg_data:
+
+# --- Ixtiyoriy: PostgreSQL bilan ishlatish uchun ---
+# Yuqoridagi DATABASE_URL ni quyidagiga o'zgartiring:
+#   - DATABASE_URL=postgresql://trendwear:trendwear@db:5432/trendwear
+# va quyidagi "db" servisini izohdan chiqaring:
+#
+#  db:
+#    image: postgres:16-alpine
+#    environment:
+#      POSTGRES_USER: trendwear
+#      POSTGRES_PASSWORD: trendwear
+#      POSTGRES_DB: trendwear
+#    volumes:
+#      - pg_data:/var/lib/postgresql/data
+#
+# volumes:
+#   pg_data:

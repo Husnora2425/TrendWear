@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrendWear — Boshqaruv paneli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">TW</div>
+      <div><h1>TrendWear</h1><span>Cloud Platform</span></div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-view="dashboard">
+        <span class="ico">▦</span> Boshqaruv paneli</button>
+      <button class="nav-item" data-view="customers">
+        <span class="ico">◍</span> Mijozlar (CRM)</button>
+      <button class="nav-item" data-view="products">
+        <span class="ico">▣</span> Ombor (WMS)</button>
+      <button class="nav-item" data-view="orders">
+        <span class="ico">◈</span> Buyurtmalar (ERP)</button>
+    </nav>
+    <a class="logout" href="/logout">⏻ Chiqish</a>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">Boshqaruv paneli</h2>
+        <p id="pageSub">Biznes ko'rsatkichlarining umumiy ko'rinishi</p>
+      </div>
+      <div class="user">
+        <div class="avatar">A</div>
+        <div><strong>Administrator</strong><span>admin@trendwear.uz</span></div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="view" id="view-dashboard">
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="panel-row">
+        <div class="panel">
+          <h3>So'nggi buyurtmalar</h3>
+          <div id="recentOrders" class="mini-list"></div>
+        </div>
+        <div class="panel">
+          <h3>Ombor holati</h3>
+          <div id="stockAlert" class="mini-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section class="view hidden" id="view-customers">
+      <div class="toolbar">
+        <h3>Mijozlar bazasi</h3>
+        <button class="add-btn" onclick="openModal('customer')">+ Yangi mijoz</button>
+      </div>
+      <div class="table-wrap"><table id="customersTable"></table></div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="view hidden" id="view-products">
+      <div class="toolbar">
+        <h3>Ombor — mahsulotlar</h3>
+        <button class="add-btn" onclick="openModal('product')">+ Yangi mahsulot</button>
+      </div>
+      <div class="table-wrap"><table id="productsTable"></table></div>
+    </section>
+
+    <!-- ORDERS -->
+    <section class="view hidden" id="view-orders">
+      <div class="toolbar">
+        <h3>Buyurtmalar</h3>
+        <button class="add-btn" onclick="openModal('order')">+ Yangi buyurtma</button>
+      </div>
+      <div class="table-wrap"><table id="ordersTable"></table></div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle">Yangi</h3><button onclick="closeModal()">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
