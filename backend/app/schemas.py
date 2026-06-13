@@ -1,11 +1,7 @@
-"""Pydantic sxemalari (API kirish/chiqish)."""
-from pydantic import BaseModel
+"""Pydantic sxemalari (API kirish/chiqish) — Pydantic v2 uchun optimallashtirilgan."""
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import datetime
-import pydantic as _pydantic
-
-# Detect Pydantic v2 vs v1 at runtime and set model config accordingly
-_PYDANTIC_V2 = _pydantic.__version__.split(".")[0] == "2"
 
 
 class CustomerIn(BaseModel):
@@ -17,13 +13,10 @@ class CustomerIn(BaseModel):
 
 
 class CustomerOut(CustomerIn):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: datetime
-    if _PYDANTIC_V2:
-        model_config = {"from_attributes": True}
-    else:
-        class Config:
-            orm_mode = True
 
 
 class ProductIn(BaseModel):
@@ -36,12 +29,9 @@ class ProductIn(BaseModel):
 
 
 class ProductOut(ProductIn):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
-    if _PYDANTIC_V2:
-        model_config = {"from_attributes": True}
-    else:
-        class Config:
-            orm_mode = True
 
 
 class OrderItemIn(BaseModel):
@@ -56,14 +46,11 @@ class OrderIn(BaseModel):
 
 
 class OrderOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     customer_id: int
     status: str
     total: float
     note: Optional[str]
     created_at: datetime
-    if _PYDANTIC_V2:
-        model_config = {"from_attributes": True}
-    else:
-        class Config:
-            orm_mode = True

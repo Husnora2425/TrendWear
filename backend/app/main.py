@@ -4,7 +4,7 @@ Bu servis HTML bermaydi — u faqat JSON API, autentifikatsiya va health-check b
 Frontend (nginx) statik sahifalarni beradi va /api, /login, /logout ni shu backendga yo'naltiradi.
 """
 import os
-from fastapi import FastAPI, Depends, Form, Response
+from fastapi import FastAPI, Depends, Form, Request, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -61,7 +61,13 @@ def _seed():
     db.close()
 
 
-# ---------- HEALTH CHECK (Load Balancer uchun) ----------
+def _redirect(request: Request, path: str, status_code: int = 303):
+    """Port saqlab qoluvchi redirect — nginx orqali kelgan so'rovlarda portni saqlaydi."""
+    base = str(request.base_url).rstrip("/")
+    return RedirectResponse(f"{base}{path}", status_code=status_code)
+
+
+# ---------- HEALTH CHECK ----------
 @app.get("/health")
 def health():
     return {"status": "healthy", "service": "trendwear-backend"}
@@ -69,21 +75,20 @@ def health():
 
 # ---------- AUTENTIFIKATSIYA ----------
 @app.post("/login")
-def login(response: Response, username: str = Form(...),
+def login(request: Request, username: str = Form(...),
           password: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(models.User).filter_by(username=username).first()
     if not user or not auth.verify_password(password, user.hashed_password):
-        # Frontend login sahifasiga xato bilan qaytarish
-        return RedirectResponse("/login.html?error=1", status_code=303)
+        return _redirect(request, "/login.html?error=1")
     token = auth.create_token({"sub": user.username})
-    resp = RedirectResponse("/", status_code=303)
+    resp = _redirect(request, "/")
     resp.set_cookie("access_token", token, httponly=True, max_age=60 * 60 * 8)
     return resp
 
 
 @app.get("/logout")
-def logout():
-    resp = RedirectResponse("/login.html", status_code=303)
+def logout(request: Request):
+    resp = _redirect(request, "/login.html")
     resp.delete_cookie("access_token")
     return resp
 

@@ -3,36 +3,11 @@
 # Hammasi BITTA portda:  http://localhost:8000
 #
 # Arxitektura:
-#   frontend (nginx)  -> host 8000  : statik UI beradi + /api,/login,/logout,/health ni backendga uzatadi
+#   frontend (nginx)   -> host 8000  : statik UI beradi + /api,/login,/logout,/health ni backendga uzatadi
 #   backend  (FastAPI) -> ichki 8001 : faqat REST API + autentifikatsiya
 #   db       (Postgres) -> ichki 5432 : ma'lumotlar bazasi
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: trendwear-backend
-    expose:
-      - "8001"                # faqat ichki tarmoq (tashqariga ochilmaydi)
-    environment:
-      - DATABASE_URL=postgresql://trendwear:trendwear@db:5432/trendwear
-      - SECRET_KEY=trendwear-prod-secret-key
-    depends_on:
-      - db
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: trendwear-frontend
-    ports:
-      - "8000:80"             # YAGONA tashqi port — UI ham, API ham shu yerdan
-    depends_on:
-      - backend
-    restart: unless-stopped
-
   db:
     image: postgres:16-alpine
     container_name: trendwear-db
@@ -43,6 +18,47 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trendwear -d trendwear"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: trendwear-backend
+    expose:
+      - "8001"
+    environment:
+      - DATABASE_URL=postgresql://trendwear:trendwear@db:5432/trendwear
+      - SECRET_KEY=trendwear-prod-secret-key
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: trendwear-frontend
+    ports:
+      - "8000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    labels:
+      - "com.docker.compose.project.url=http://localhost:8000"
 
 volumes:
   pg_data:
