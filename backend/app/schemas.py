@@ -2,6 +2,10 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
+import pydantic as _pydantic
+
+# Detect Pydantic v2 vs v1 at runtime and set model config accordingly
+_PYDANTIC_V2 = _pydantic.__version__.split(".")[0] == "2"
 
 
 class CustomerIn(BaseModel):
@@ -15,8 +19,11 @@ class CustomerIn(BaseModel):
 class CustomerOut(CustomerIn):
     id: int
     created_at: datetime
-    class Config:
-        from_attributes = True
+    if _PYDANTIC_V2:
+        model_config = {"from_attributes": True}
+    else:
+        class Config:
+            orm_mode = True
 
 
 class ProductIn(BaseModel):
@@ -30,8 +37,11 @@ class ProductIn(BaseModel):
 
 class ProductOut(ProductIn):
     id: int
-    class Config:
-        from_attributes = True
+    if _PYDANTIC_V2:
+        model_config = {"from_attributes": True}
+    else:
+        class Config:
+            orm_mode = True
 
 
 class OrderItemIn(BaseModel):
@@ -52,5 +62,8 @@ class OrderOut(BaseModel):
     total: float
     note: Optional[str]
     created_at: datetime
-    class Config:
-        from_attributes = True
+    if _PYDANTIC_V2:
+        model_config = {"from_attributes": True}
+    else:
+        class Config:
+            orm_mode = True

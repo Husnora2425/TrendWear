@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrendWear — Kirish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-1:#38bdf8; --sky-2:#0ea5e9;
+    --rose-1:#fb7185; --rose-2:#f43f5e;
+    --text:#e2e8f0; --muted:#94a3b8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',sans-serif; min-height:100vh; color:var(--text);
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(900px 500px at 15% 0%, rgba(14,165,233,.35), transparent 60%),
+      radial-gradient(900px 600px at 90% 100%, rgba(244,63,94,.32), transparent 60%),
+      linear-gradient(160deg, #0b1120 0%, #111c33 55%, #1a1430 100%);
+    padding:24px; position:relative; overflow:hidden;
+  }
+  .grid-bg{position:absolute;inset:0;z-index:0;opacity:.4;
+    background-image:linear-gradient(rgba(148,163,184,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(148,163,184,.06) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000,transparent);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000,transparent)}
+  .card{
+    position:relative; z-index:1; width:100%; max-width:430px;
+    background:rgba(255,255,255,.06); backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.12); border-radius:24px;
+    padding:44px 38px; box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
+  }
+  .logo{display:flex; align-items:center; gap:13px; margin-bottom:30px}
+  .logo .mark{
+    width:48px;height:48px;border-radius:14px;
+    background:linear-gradient(135deg,var(--sky-1),var(--rose-2));
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;
+    font-family:'Sora',sans-serif; box-shadow:0 10px 26px -6px rgba(244,63,94,.6);
+  }
+  .logo h1{font-family:'Sora',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.02em}
+  .logo p{font-size:12px;color:var(--muted)}
+  .welcome{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;margin-bottom:7px;letter-spacing:-.02em}
+  .welcome span{background:linear-gradient(120deg,var(--sky-1),var(--rose-1));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.5}
+  label{display:block;font-size:13px;font-weight:600;color:#cbd5e1;margin-bottom:8px}
+  .field{margin-bottom:18px}
+  input{
+    width:100%;padding:14px 16px;border:1.5px solid rgba(255,255,255,.14);border-radius:13px;
+    font-size:15px;font-family:inherit;transition:.2s;background:rgba(255,255,255,.04);color:var(--text);
+  }
+  input::placeholder{color:#64748b}
+  input:focus{outline:none;border-color:var(--sky-1);background:rgba(255,255,255,.07);box-shadow:0 0 0 4px rgba(56,189,248,.18)}
+  .btn{
+    width:100%;padding:15px;border:none;border-radius:13px;color:#fff;
+    font-family:'Sora',sans-serif;font-weight:700;font-size:15px;cursor:pointer;
+    background:linear-gradient(135deg,var(--sky-2) 0%,var(--rose-2) 100%);
+    box-shadow:0 14px 32px -8px rgba(244,63,94,.55);transition:.2s;margin-top:8px;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 20px 40px -10px rgba(244,63,94,.7)}
+  .err{background:rgba(244,63,94,.15);color:#fda4af;padding:12px 15px;border-radius:11px;font-size:13px;margin-bottom:18px;border:1px solid rgba(244,63,94,.3)}
+  .hint{margin-top:24px;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.6}
+  .hint code{background:rgba(56,189,248,.15);padding:3px 9px;border-radius:7px;font-weight:600;color:var(--sky-1)}
+</style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="card">
+    <div class="logo">
+      <div class="mark">TW</div>
+      <div>
+        <h1>TrendWear</h1>
+        <p>Distribution Ltd &middot; Bulutli platforma</p>
+      </div>
+    </div>
+    <div class="welcome">Xush <span>kelibsiz</span></div>
+    <div class="sub">ERP &middot; CRM &middot; WMS tizimiga kirish uchun ma'lumotlaringizni kiriting</div>
+    <div class="err" id="err" style="display:none">Login yoki parol noto'g'ri</div>
+    <form method="post" action="/login">
+      <div class="field">
+        <label>Foydalanuvchi nomi</label>
+        <input name="username" placeholder="admin" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label>Parol</label>
+        <input name="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit">Tizimga kirish</button>
+    </form>
+    <div class="hint">
+      Demo kirish: <code>admin</code> / <code>admin123</code>
+    </div>
+  </div>
+  <script>
+    if (new URLSearchParams(location.search).get('error')) {
+      document.getElementById('err').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -24,7 +24,7 @@ def create_customer(c: schemas.CustomerIn, db: Session = Depends(get_db), user=D
 
 @router.delete("/customers/{cid}")
 def delete_customer(cid: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    obj = db.query(models.Customer).get(cid)
+    obj = db.get(models.Customer, cid)
     if not obj:
         raise HTTPException(404, "Mijoz topilmadi")
     db.delete(obj); db.commit()
@@ -48,7 +48,7 @@ def create_product(p: schemas.ProductIn, db: Session = Depends(get_db), user=Dep
 
 @router.delete("/products/{pid}")
 def delete_product(pid: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    obj = db.query(models.Product).get(pid)
+    obj = db.get(models.Product, pid)
     if not obj:
         raise HTTPException(404, "Mahsulot topilmadi")
     db.delete(obj); db.commit()
@@ -63,13 +63,13 @@ def list_orders(db: Session = Depends(get_db), user=Depends(get_current_user)):
 
 @router.post("/orders", response_model=schemas.OrderOut)
 def create_order(o: schemas.OrderIn, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    if not db.query(models.Customer).get(o.customer_id):
+    if not db.get(models.Customer, o.customer_id):
         raise HTTPException(400, "Mijoz topilmadi")
     order = models.Order(customer_id=o.customer_id, note=o.note)
     db.add(order); db.flush()
     total = 0.0
     for it in o.items:
-        prod = db.query(models.Product).get(it.product_id)
+        prod = db.get(models.Product, it.product_id)
         if not prod:
             raise HTTPException(400, f"Mahsulot {it.product_id} topilmadi")
         if prod.stock < it.quantity:
@@ -85,7 +85,7 @@ def create_order(o: schemas.OrderIn, db: Session = Depends(get_db), user=Depends
 
 @router.put("/orders/{oid}/status")
 def update_status(oid: int, status: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    order = db.query(models.Order).get(oid)
+    order = db.get(models.Order, oid)
     if not order:
         raise HTTPException(404, "Buyurtma topilmadi")
     order.status = status

@@ -1,14 +1,14 @@
+# TrendWear Frontend — nginx statik server + backendga proxy
 FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
 
-# Remove default content
-RUN rm -rf ./*
+# Standart kontentni o'chirish
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy only static frontend files (JS/CSS/assets)
-COPY backend/app/static/ ./static/
+# Frontend fayllari (HTML/CSS/JS)
+COPY html/ /usr/share/nginx/html/
 
-# Copy nginx config
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# Nginx sozlamasi
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

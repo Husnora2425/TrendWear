@@ -31,6 +31,11 @@ async function api(path, opts = {}) {
   const r = await fetch("/api" + path, {
     headers: { "Content-Type": "application/json" }, ...opts
   });
+  if (r.status === 401) {
+    // Token yo'q yoki muddati tugagan — kirish sahifasiga qaytaramiz
+    location.href = "/login.html";
+    throw new Error("Avtorizatsiyadan o'tilmagan");
+  }
   if (!r.ok) {
     const e = await r.json().catch(() => ({ detail: "Xatolik" }));
     throw new Error(e.detail || "Server xatosi");
